@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel Administrativo | Sistema de Laboratórios</title>
+  <meta name="description" content="Painel de controle total para aprovação de professores, regras, laboratórios e configurações.">
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="/css/components.css">
+</head>
+<body>
+
+  <!-- Navegação Superior -->
+  <header class="navbar">
+    <a href="/index.html" class="nav-brand">
+      <span class="brand-badge">ADMIN</span>
+      <span>Painel Administrativo</span>
+    </a>
+    <ul class="nav-links" id="nav-user-actions">
+      <li><a href="/index.html">Programação Pública</a></li>
+    </ul>
+  </header>
+
+  <main class="container">
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Gestão e Administração Central</h1>
+        <p class="page-subtitle">Aprove professores, gerencie permissões, cadastre laboratórios, equipamentos e altere regras globais.</p>
+      </div>
+      <div>
+        <a href="/index.html" class="btn btn-secondary btn-sm">Ver Programação em Tempo Real</a>
+      </div>
+    </div>
+
+    <!-- Estatísticas Rápidas -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+      <div class="dashboard-card" style="text-align: center;">
+        <div style="font-size: 0.82rem; color: var(--text-dim); text-transform: uppercase; font-weight: 700;">Professores Pendentes</div>
+        <div style="font-size: 2rem; font-weight: 800; color: #fbbf24; margin-top: 0.25rem;" id="stat-pending-badge">0</div>
+      </div>
+      <div class="dashboard-card" style="text-align: center;">
+        <div style="font-size: 0.82rem; color: var(--text-dim); text-transform: uppercase; font-weight: 700;">Total de Usuários</div>
+        <div style="font-size: 2rem; font-weight: 800; color: #818cf8; margin-top: 0.25rem;" id="stat-total-users">0</div>
+      </div>
+      <div class="dashboard-card" style="text-align: center;">
+        <div style="font-size: 0.82rem; color: var(--text-dim); text-transform: uppercase; font-weight: 700;">Laboratórios Cadastrados</div>
+        <div style="font-size: 2rem; font-weight: 800; color: #34d399; margin-top: 0.25rem;" id="stat-total-labs">0</div>
+      </div>
+    </div>
+
+    <!-- Abas Administrativas -->
+    <div class="tabs-header">
+      <button class="tab-btn active" data-tab="tab-pending">Aprovações de Professores</button>
+      <button class="tab-btn" data-tab="tab-users">Gestão de Usuários</button>
+      <button class="tab-btn" data-tab="tab-labs">Laboratórios</button>
+      <button class="tab-btn" data-tab="tab-equipments">Equipamentos</button>
+      <button class="tab-btn" data-tab="tab-rules">Regras dos Professores</button>
+      <button class="tab-btn" data-tab="tab-settings">Configurações Globais</button>
+    </div>
+
+    <!-- Aba 1: Aprovações Pendentes -->
+    <section id="tab-pending" class="tab-content active">
+      <div style="margin-bottom: 1rem;">
+        <h2 style="font-size: 1.15rem; font-weight: 700; color: #fff;">Professores Aguardando Aprovação</h2>
+        <p style="font-size: 0.88rem; color: var(--text-muted);">Professores pendentes não têm permissão para agendar horários até que você autorize seu acesso.</p>
+      </div>
+      <div id="pending-teachers-list">Carregando...</div>
+    </section>
+
+    <!-- Aba 2: Gestão de Usuários -->
+    <section id="tab-users" class="tab-content">
+      <div class="dashboard-card">
+        <h2 style="font-size: 1.15rem; font-weight: 700; color: #fff; margin-bottom: 1rem;">Usuários Cadastrados no Sistema</h2>
+        <div class="schedule-table-wrapper">
+          <table class="schedule-table">
+            <thead>
+              <tr>
+                <th>Usuário / Email</th>
+                <th>Papel (Role)</th>
+                <th>Status da Conta</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="users-table-body">
+              <!-- Preenchido via admin.js -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Aba 3: Laboratórios -->
+    <section id="tab-labs" class="tab-content">
+      <div style="display: grid; grid-template-columns: 1fr 340px; gap: 1.5rem; align-items: start;">
+        <div>
+          <h2 style="font-size: 1.15rem; font-weight: 700; color: #fff; margin-bottom: 1rem;">Laboratórios Escolares</h2>
+          <div id="admin-labs-list" style="display: flex; flex-direction: column; gap: 1rem;">Carregando...</div>
+        </div>
+
+        <!-- Formulário de Criação de Laboratório -->
+        <div class="dashboard-card">
+          <h3 style="font-size: 1rem; font-weight: 700; color: #fff; margin-bottom: 1rem;">Novo Laboratório</h3>
+          <form id="form-create-lab">
+            <div class="form-group" style="margin-bottom: 0.85rem;">
+              <label class="form-label" for="lab-code">Código (Slug único):</label>
+              <input type="text" id="lab-code" class="input-control" placeholder="ex: lab5" required>
+            </div>
+            <div class="form-group" style="margin-bottom: 0.85rem;">
+              <label class="form-label" for="lab-name">Nome de Exibição:</label>
+              <input type="text" id="lab-name" class="input-control" placeholder="ex: Lab 5" required>
+            </div>
+            <div class="form-group" style="margin-bottom: 0.85rem;">
+              <label class="form-label" for="lab-cap">Capacidade (Lugares):</label>
+              <input type="number" id="lab-cap" class="input-control" value="30" min="1" required>
+            </div>
+            <div class="form-group" style="margin-bottom: 0.85rem;">
+              <label class="form-label" for="lab-loc">Localização:</label>
+              <input type="text" id="lab-loc" class="input-control" placeholder="ex: Bloco C - 2º Andar">
+            </div>
+            <div class="form-group" style="margin-bottom: 1rem;">
+              <label class="form-label" for="lab-desc">Descrição:</label>
+              <input type="text" id="lab-desc" class="input-control" placeholder="ex: Laboratório para robótica">
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%;">Cadastrar Laboratório</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- Aba 4: Equipamentos -->
+    <section id="tab-equipments" class="tab-content">
+      <div style="display: grid; grid-template-columns: 1fr 340px; gap: 1.5rem; align-items: start;">
+        <div>
+          <h2 style="font-size: 1.15rem; font-weight: 700; color: #fff; margin-bottom: 1rem;">Inventário de Equipamentos</h2>
+          <div id="admin-equipments-list">Carregando...</div>
+        </div>
+
+        <!-- Formulário de Equipamento -->
+        <div class="dashboard-card">
+          <h3 style="font-size: 1rem; font-weight: 700; color: #fff; margin-bottom: 1rem;">Adicionar Equipamento</h3>
+          <form id="form-create-equipment">
+            <div class="form-group" style="margin-bottom: 0.85rem;">
+              <label class="form-label" for="eq-lab-select">Laboratório Vinculado:</label>
+              <select id="eq-lab-select" class="input-control" required></select>
+            </div>
+            <div class="form-group" style="margin-bottom: 0.85rem;">
+              <label class="form-label" for="eq-name">Nome do Equipamento:</label>
+              <input type="text" id="eq-name" class="input-control" placeholder="ex: Projetor 4K" required>
+            </div>
+            <div class="form-group" style="margin-bottom: 0.85rem;">
+              <label class="form-label" for="eq-type">Tipo:</label>
+              <input type="text" id="eq-type" class="input-control" placeholder="ex: Projetor, Computador, Switch" required>
+            </div>
+            <div class="form-group" style="margin-bottom: 0.85rem;">
+              <label class="form-label" for="eq-pat">Número de Patrimônio:</label>
+              <input type="text" id="eq-pat" class="input-control" placeholder="ex: PAT-09823">
+            </div>
+            <div class="form-group" style="margin-bottom: 1rem;">
+              <label class="form-label" for="eq-desc">Descrição / Detalhes:</label>
+              <input type="text" id="eq-desc" class="input-control" placeholder="ex: Cabo HDMI incluso">
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%;">Salvar Equipamento</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- Aba 5: Regras dos Professores -->
+    <section id="tab-rules" class="tab-content">
+      <div style="display: grid; grid-template-columns: 1fr 340px; gap: 1.5rem; align-items: start;">
+        <div>
+          <h2 style="font-size: 1.15rem; font-weight: 700; color: #fff; margin-bottom: 1rem;">Regras de Autorização dos Professores</h2>
+          <div id="admin-rules-list">Carregando...</div>
+        </div>
+
+        <!-- Formulário de Regra -->
+        <div class="dashboard-card">
+          <h3 style="font-size: 1rem; font-weight: 700; color: #fff; margin-bottom: 1rem;">Nova Regra de Reserva</h3>
+          <form id="form-create-rule">
+            <div class="form-group" style="margin-bottom: 0.85rem;">
+              <label class="form-label" for="rule-prof-select">Professor:</label>
+              <select id="rule-prof-select" class="input-control" required></select>
+            </div>
+            <div class="form-group" style="margin-bottom: 0.85rem;">
+              <label class="form-label" for="rule-name">Nome Descritivo da Regra:</label>
+              <input type="text" id="rule-name" class="input-control" placeholder="ex: Aulas Segundas e Quartas" required>
+            </div>
+            <div class="form-group" style="margin-bottom: 1rem;">
+              <label class="form-label">Dias Autorizados da Semana:</label>
+              <div style="display: flex; flex-direction: column; gap: 0.35rem; margin-top: 0.35rem; font-size: 0.85rem;">
+                <label><input type="checkbox" name="rule-day" value="1"> Segunda-feira</label>
+                <label><input type="checkbox" name="rule-day" value="2"> Terça-feira</label>
+                <label><input type="checkbox" name="rule-day" value="3"> Quarta-feira</label>
+                <label><input type="checkbox" name="rule-day" value="4"> Quinta-feira</label>
+                <label><input type="checkbox" name="rule-day" value="5"> Sexta-feira</label>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%;">Salvar Regra</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- Aba 6: Configurações Globais -->
+    <section id="tab-settings" class="tab-content">
+      <div class="dashboard-card" style="max-width: 600px;">
+        <h2 style="font-size: 1.15rem; font-weight: 700; color: #fff; margin-bottom: 1.25rem;">Parâmetros Globais do Sistema</h2>
+
+        <div class="form-group" style="margin-bottom: 1.25rem;">
+          <label class="form-label" for="cfg-window-weeks">Janela de Agendamento (Semanas):</label>
+          <input type="number" id="cfg-window-weeks" class="input-control" min="1" max="52" value="4">
+          <span class="form-hint">Define com quantas semanas de antecedência máxima os usuários podem programar reservas (Padrão: 4 semanas).</span>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 1.25rem;">
+          <label class="form-label" for="cfg-exception-days">Janela de Exceção por Antecedência (Dias):</label>
+          <input type="number" id="cfg-exception-days" class="input-control" min="0" max="30" value="1">
+          <span class="form-hint">Permite que professores reservem horários livres mesmo fora dos seus dias regulares se estiverem dentro deste prazo de dias (Padrão: 1 dia).</span>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 1.5rem;">
+          <label class="form-label" for="cfg-timezone">Fuso Horário Oficial (Timezone):</label>
+          <input type="text" id="cfg-timezone" class="input-control" value="America/Sao_Paulo">
+          <span class="form-hint">Fuso horário utilizado para sincronização dos dias escolares e aulas.</span>
+        </div>
+
+        <button id="btn-save-settings" class="btn btn-primary">Salvar Novas Configurações</button>
+      </div>
+    </section>
+  </main>
+
+  <script type="module">
+    import { setupNavHeader } from '/js/auth.js';
+    import { initAdminDashboard } from '/js/admin.js';
+
+    document.addEventListener('DOMContentLoaded', () => {
+      setupNavHeader();
+      initAdminDashboard();
+    });
+  </script>
+</body>
+</html>

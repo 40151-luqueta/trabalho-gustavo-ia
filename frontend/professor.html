@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel do Professor | Gestão de Reservas</title>
+  <meta name="description" content="Painel exclusivo para professores autorizados solicitarem e gerenciarem reservas de laboratórios.">
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="/css/components.css">
+</head>
+<body>
+
+  <!-- Navegação Superior -->
+  <header class="navbar">
+    <a href="/index.html" class="nav-brand">
+      <span class="brand-badge">LABS</span>
+      <span>Painel do Professor</span>
+    </a>
+    <ul class="nav-links" id="nav-user-actions">
+      <li><a href="/index.html">Programação Pública</a></li>
+    </ul>
+  </header>
+
+  <main class="container">
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Olá, <span id="prof-welcome-name">Professor</span></h1>
+        <p class="page-subtitle">Solicite novas reservas de laboratórios, verifique suas regras e gerencie suas aulas agendadas.</p>
+      </div>
+      <div>
+        <a href="/index.html" class="btn btn-secondary btn-sm">Ver Grade Pública Geral</a>
+      </div>
+    </div>
+
+    <!-- Navegação de Abas -->
+    <div class="tabs-header">
+      <button class="tab-btn active" data-tab="tab-new-booking">Agendar Nova Reserva</button>
+      <button class="tab-btn" data-tab="tab-my-bookings">Minhas Reservas Ativas</button>
+      <button class="tab-btn" data-tab="tab-my-rules">Minhas Regras & Autorizações</button>
+    </div>
+
+    <!-- Aba 1: Assistente de Nova Reserva -->
+    <section id="tab-new-booking" class="tab-content active">
+      <div class="dashboard-card" style="max-width: 760px; margin: 0 auto;">
+        <h2 style="font-size: 1.25rem; font-weight: 700; color: #fff; margin-bottom: 1.25rem;">
+          Assistente de Agendamento Passo a Passo
+        </h2>
+
+        <div class="form-grid">
+          <!-- Passo 1: Data -->
+          <div class="form-group">
+            <label class="form-label" for="res-date">1. Data da Reserva (dia letivo):</label>
+            <input type="date" id="res-date" class="input-control" required>
+            <span class="form-hint">Disponível dentro da janela de semanas autorizada.</span>
+          </div>
+
+          <!-- Passo 2: Laboratório -->
+          <div class="form-group">
+            <label class="form-label" for="res-lab">2. Laboratório de Informática:</label>
+            <select id="res-lab" class="input-control" required>
+              <option value="">Carregando laboratórios...</option>
+            </select>
+          </div>
+
+          <!-- Passo 3: Aula -->
+          <div class="form-group">
+            <label class="form-label" for="res-aula">3. Horário / Aula (50 minutos):</label>
+            <select id="res-aula" class="input-control" required>
+              <option value="">Carregando horários...</option>
+            </select>
+          </div>
+
+          <!-- Passo 4: Observações Opcionais -->
+          <div class="form-group">
+            <label class="form-label" for="res-obs">4. Observações / Turma (opcional):</label>
+            <input type="text" id="res-obs" class="input-control" placeholder="ex: Aula prática com Turma 2º B">
+          </div>
+        </div>
+
+        <div style="text-align: right; margin-bottom: 1rem;">
+          <button id="btn-verify-booking" class="btn btn-secondary btn-sm">Verificar Disponibilidade Agora</button>
+        </div>
+
+        <!-- Caixa de Feedback da Avaliação das Regras -->
+        <div id="booking-evaluation-box"></div>
+
+        <!-- Resumo da Reserva antes de Confirmar -->
+        <div id="booking-summary-card" class="summary-card" style="display: none;">
+          <h3 style="font-size: 0.95rem; font-weight: 700; color: #fff; margin-bottom: 0.75rem;">Resumo da Solicitação:</h3>
+          <div class="summary-row">
+            <span class="label">Professor Responsável:</span>
+            <span class="val" id="sum-teacher">---</span>
+          </div>
+          <div class="summary-row">
+            <span class="label">Laboratório Selecionado:</span>
+            <span class="val" id="sum-lab">---</span>
+          </div>
+          <div class="summary-row">
+            <span class="label">Data Agendada:</span>
+            <span class="val" id="sum-date">---</span>
+          </div>
+          <div class="summary-row">
+            <span class="label">Aula e Horário:</span>
+            <span class="val" id="sum-lesson">---</span>
+          </div>
+          <div class="summary-row">
+            <span class="label">Status do Horário:</span>
+            <span class="val" id="sum-status" style="color: #34d399;">Disponível</span>
+          </div>
+
+          <div style="margin-top: 1.25rem; display: flex; justify-content: flex-end;">
+            <button id="btn-confirm-booking" class="btn btn-primary" disabled>Confirmar Agendamento</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Aba 2: Minhas Reservas Ativas -->
+    <section id="tab-my-bookings" class="tab-content">
+      <div id="my-reservations-list">
+        Carregando...
+      </div>
+    </section>
+
+    <!-- Aba 3: Minhas Regras e Autorizações -->
+    <section id="tab-my-rules" class="tab-content">
+      <div class="alert alert-info">
+        <strong>Sobre a Regra de Exceção por Antecedência:</strong> Mesmo para dias da semana ou semanas onde você não possua autorização regular, o sistema permite que você reserve emergencialmente caso esteja dentro do prazo de antecedência configurado (ex: 1 dia antes), desde que o laboratório esteja livre.
+      </div>
+      <div id="my-rules-list">
+        Carregando...
+      </div>
+    </section>
+  </main>
+
+  <script type="module">
+    import { setupNavHeader } from '/js/auth.js';
+    import { initProfessorDashboard } from '/js/professor.js';
+
+    document.addEventListener('DOMContentLoaded', () => {
+      setupNavHeader();
+      initProfessorDashboard();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,1832 @@
+Você é um agente de desenvolvimento de software full-stack, responsável por projetar, implementar, testar, corrigir e documentar uma aplicação web para gerenciamento de reservas de laboratórios de informática de uma escola.
+
+Seu trabalho deve ser feito de forma incremental, organizada e verificável. Não apenas escreva código: analise os requisitos, tome decisões técnicas coerentes, implemente, execute testes, corrija problemas encontrados e mantenha a documentação do projeto atualizada.
+
+1. Objetivo do sistema
+Desenvolver um sistema web para que uma escola possa gerenciar a utilização de seus laboratórios de informática.
+
+O sistema deverá controlar:
+
+usuários;
+
+alunos;
+
+professores;
+
+administradores;
+
+aprovação de professores;
+
+permissões;
+
+regras individuais de reserva;
+
+períodos/semanas autorizados;
+
+antecedência mínima para reservas;
+
+reservas dos laboratórios;
+
+aulas/horários;
+
+disponibilidade;
+
+programação pública dos laboratórios;
+
+equipamentos/aparelhos existentes nos laboratórios.
+
+Existem atualmente 5 laboratórios:
+
+Lab 1
+
+Lab 2
+
+Lab 3
+
+Lab 4
+
+Lab Fund
+
+O sistema deverá ser desenvolvido de forma que a quantidade de laboratórios possa ser alterada futuramente sem necessidade de reescrever a lógica principal.
+
+2. Stack obrigatória
+Backend
+Utilizar:
+
+Node.js
+
+JavaScript ou TypeScript, preferencialmente TypeScript se isso trouxer benefícios claros;
+
+MongoDB;
+
+API REST;
+
+deploy da API na Vercel.
+
+O backend deverá ficar em sua própria pasta.
+
+Exemplo:
+
+/backend
+
+A API deverá ser preparada para execução local e deploy na Vercel.
+
+Frontend
+O frontend ficará em uma pasta separada:
+
+/frontend
+
+Utilizar:
+
+HTML
+
+CSS
+
+JavaScript
+
+Não utilizar frameworks frontend pesados sem necessidade.
+
+A interface deverá consumir exclusivamente a API para operações de dados.
+
+3. Estrutura inicial esperada
+Organize o projeto aproximadamente assim:
+
+/
+├── backend/
+│   ├── src/
+│   ├── api/
+│   ├── ...
+│   ├── package.json
+│   └── ...
+│
+├── frontend/
+│   ├── index.html
+│   ├── ...
+│   ├── css/
+│   └── js/
+│
+├── Roadmap.md
+├── Contexto.md
+├── api.md
+├── README.md
+└── ...
+
+A estrutura pode ser adaptada caso exista uma justificativa técnica melhor.
+
+4. Arquivos obrigatórios de documentação
+Além do código, devem existir obrigatoriamente:
+
+Roadmap.md
+Deve conter todas as etapas planejadas para o desenvolvimento.
+
+Exemplo:
+
+1. Análise dos requisitos
+2. Arquitetura
+3. Modelagem do banco
+4. Autenticação
+5. Usuários
+6. Regras de autorização
+7. Laboratórios
+8. Horários
+9. Reservas
+10. Interface pública
+11. Painel do professor
+12. Painel administrativo
+13. Equipamentos
+14. Testes
+15. Segurança
+16. Deploy
+17. Testes finais
+
+O roadmap deve ser atualizado conforme as tarefas forem concluídas.
+
+Use estados claros, por exemplo:
+
+[ ] Pendente
+[~] Em andamento
+[x] Concluído
+[!] Bloqueado
+
+Não marque uma etapa como concluída apenas porque o código foi escrito. Ela deve estar implementada e testada.
+
+Contexto.md
+Esse arquivo deverá funcionar como a memória técnica persistente do projeto.
+
+Ele deve conter um resumo atualizado do estado atual da aplicação.
+
+Deve registrar:
+
+objetivo;
+
+arquitetura;
+
+stack;
+
+estrutura de pastas;
+
+modelos do MongoDB;
+
+regras de negócio;
+
+regras de autorização;
+
+endpoints existentes;
+
+funcionalidades implementadas;
+
+funcionalidades pendentes;
+
+decisões técnicas importantes;
+
+problemas conhecidos;
+
+testes existentes;
+
+estado atual do projeto;
+
+próximos passos.
+
+Atualize este arquivo ao final de cada tarefa significativa.
+
+Outro agente deverá conseguir abrir Contexto.md e entender rapidamente o estado atual do projeto sem precisar ler todo o código.
+
+api.md
+Esse arquivo deverá documentar a API.
+
+Para cada endpoint, documentar:
+
+método HTTP;
+
+URL;
+
+autenticação necessária;
+
+permissão necessária;
+
+parâmetros;
+
+body;
+
+respostas;
+
+códigos HTTP;
+
+exemplos de requisição;
+
+exemplos de resposta.
+
+Exemplo:
+
+POST /api/auth/login
+
+Autenticação: não
+
+Body:
+
+{
+  "email": "professor@escola.com",
+  "senha": "123456"
+}
+
+Resposta:
+
+200
+
+{
+  "token": "...",
+  "usuario": {
+    ...
+  }
+}
+
+O api.md deve ser atualizado sempre que a API mudar.
+
+5. Usuários
+Qualquer pessoa poderá realizar cadastro.
+
+No cadastro deverá escolher:
+
+Aluno
+
+Professor
+
+O usuário deverá fornecer pelo menos:
+
+nome;
+
+email;
+
+senha;
+
+tipo de usuário.
+
+Pode adicionar outros campos necessários, desde que façam sentido.
+
+6. Alunos
+Alunos possuem uma permissão extremamente limitada.
+
+Depois do cadastro:
+
+podem visualizar a programação pública;
+
+podem consultar quais laboratórios estão ocupados;
+
+podem consultar quais estão disponíveis;
+
+podem visualizar quem realizou uma reserva, conforme as regras de privacidade definidas pelo sistema;
+
+não podem criar reservas;
+
+não podem editar reservas;
+
+não podem cancelar reservas;
+
+não podem acessar o painel administrativo;
+
+não podem alterar dados.
+
+O sistema deverá garantir isso no backend.
+
+Não basta esconder botões no frontend.
+
+7. Professores
+Professores podem se cadastrar.
+
+Entretanto, um professor recém-cadastrado deverá ficar inicialmente em estado:
+
+PENDENTE
+
+Enquanto estiver pendente:
+
+não poderá acessar as funcionalidades internas;
+
+não poderá criar reservas;
+
+não poderá administrar nada.
+
+O administrador deverá analisar o cadastro e aprová-lo.
+
+Depois da aprovação:
+
+PENDENTE → PROFESSOR_APROVADO
+
+O professor aprovado poderá acessar o sistema e utilizar suas permissões de reserva.
+
+O status de aprovação deverá ser controlado pelo backend.
+
+8. Administrador
+Deverá existir inicialmente apenas um administrador.
+
+O sistema deve garantir que não existam múltiplos administradores simultaneamente, salvo se essa regra for explicitamente alterada no futuro.
+
+O administrador poderá:
+
+visualizar todos os usuários;
+
+cadastrar usuários;
+
+excluir usuários;
+
+aprovar professores;
+
+promover aluno para professor;
+
+promover usuário para administrador, se permitido pela regra administrativa;
+
+rebaixar administrador/professor/aluno conforme as regras;
+
+alterar dados dos usuários;
+
+bloquear/desbloquear usuários;
+
+visualizar reservas;
+
+excluir reservas;
+
+alterar reservas;
+
+administrar laboratórios;
+
+administrar horários;
+
+administrar regras de reserva;
+
+alterar períodos permitidos para professores;
+
+criar novas regras;
+
+excluir regras;
+
+modificar a antecedência necessária para reservas;
+
+alterar o número de semanas disponíveis para programação;
+
+visualizar logs importantes.
+
+Regra importante
+O sistema deve impedir que o administrador se remova acidentalmente e deixe a aplicação sem administrador.
+
+Também deverá existir proteção contra situações como:
+
+Admin A → rebaixa Admin A
+
+se isso resultar em zero administradores.
+
+Se houver somente um administrador, ele não poderá executar uma operação que deixe o sistema sem administrador.
+
+9. Regra fundamental: professores e períodos autorizados
+Cada professor poderá ter regras específicas de reserva.
+
+O administrador poderá definir para cada professor:
+
+dias da semana permitidos;
+
+semanas/períodos permitidos;
+
+laboratórios permitidos, se essa funcionalidade for implementada;
+
+horários permitidos, caso necessário futuramente;
+
+antecedência excepcional;
+
+data inicial;
+
+data final;
+
+regra recorrente ou período específico.
+
+Exemplo:
+
+Professor: João
+
+Segunda-feira:
+permitido
+
+Terça-feira:
+permitido
+
+Quarta-feira:
+não permitido
+
+Quinta-feira:
+permitido
+
+Sexta-feira:
+não permitido
+
+Também pode existir uma regra baseada em semanas.
+
+Por exemplo:
+
+Professor João
+
+Semana 1 → permitido
+Semana 2 → não permitido
+Semana 3 → permitido
+Semana 4 → não permitido
+
+A arquitetura deverá permitir diferentes tipos de regras sem precisar modificar profundamente o sistema.
+
+10. Exceção de antecedência
+Existe uma regra muito importante.
+
+Mesmo quando um professor não possui autorização para aquele dia ou semana, ele poderá realizar uma reserva excepcionalmente quando estiver dentro da janela de antecedência definida pelo sistema.
+
+Regra inicial:
+
+Um professor pode reservar com 1 dia de antecedência mesmo que aquele dia/semana não esteja dentro de sua programação regular, desde que exista vaga.
+
+Exemplo:
+
+Professor João só pode reservar normalmente às segundas-feiras.
+
+Hoje é terça-feira.
+
+Se amanhã for quarta-feira, João poderá tentar reservar para quarta-feira se houver vaga, porque está dentro da regra de exceção de 1 dia.
+
+Essa exceção deve ser configurável pelo administrador.
+
+Por exemplo:
+
+Antecedência excepcional:
+1 dia
+
+O administrador poderá alterar para:
+
+2 dias
+3 dias
+5 dias
+etc.
+
+A regra deve ser implementada de forma configurável, e não codificada diretamente como:
+
+if (days === 1)
+
+11. Prioridade das regras
+Crie uma lógica clara para determinar se uma reserva é permitida.
+
+A decisão deverá considerar pelo menos:
+
+usuário autenticado;
+
+usuário ativo;
+
+usuário é professor aprovado ou administrador;
+
+data da reserva;
+
+janela máxima de programação;
+
+existência de regras específicas do professor;
+
+dia da semana;
+
+semana/período;
+
+regra de exceção por antecedência;
+
+disponibilidade do laboratório;
+
+disponibilidade do horário;
+
+conflitos com outras reservas.
+
+A implementação deve evitar ambiguidades.
+
+Documente essa lógica em Contexto.md.
+
+12. Janela de programação
+Por padrão, o usuário poderá programar reservas para 4 semanas à frente, considerando a semana atual.
+
+Essa regra também deverá ser configurável pelo administrador.
+
+Por exemplo:
+
+Janela de reservas:
+4 semanas
+
+O administrador poderá alterar para:
+
+2 semanas
+6 semanas
+8 semanas
+etc.
+
+Não deixar o número 4 fixo no código.
+
+O backend deverá validar essa regra.
+
+13. Horários
+Existem 6 aulas por dia.
+
+Cada aula possui:
+
+50 minutos
+
+O sistema deverá representar os horários de maneira configurável.
+
+Inicialmente:
+
+Aula 1
+Aula 2
+Aula 3
+Aula 4
+Aula 5
+Aula 6
+
+Não presumir horários específicos de início/fim sem que sejam fornecidos.
+
+A estrutura deverá permitir posteriormente configurar:
+
+Aula 1: 07:00 - 07:50
+Aula 2: 07:50 - 08:40
+...
+
+Os horários devem estar associados a dias úteis:
+
+segunda;
+
+terça;
+
+quarta;
+
+quinta;
+
+sexta.
+
+Sábado e domingo não fazem parte da programação inicial.
+
+14. Laboratórios
+Existem 5 laboratórios:
+
+lab1
+lab2
+lab3
+lab4
+labFund
+
+Nomes exibidos:
+
+Lab 1
+Lab 2
+Lab 3
+Lab 4
+Lab Fund
+
+Cada laboratório deverá possuir informações próprias.
+
+Sugestão:
+
+id
+nome
+descricao
+ativo
+capacidade
+localizacao
+
+O sistema deverá permitir que o administrador:
+
+cadastre laboratório;
+
+edite laboratório;
+
+desative laboratório;
+
+reative laboratório;
+
+exclua laboratório quando não houver dependências que impeçam isso.
+
+Evitar exclusões destrutivas desnecessárias.
+
+15. Equipamentos/aparelhos
+O sistema também deverá listar os aparelhos/equipamentos existentes em cada laboratório.
+
+Cada equipamento pode possuir:
+
+id
+laboratorioId
+nome
+tipo
+numeroPatrimonio
+descricao
+status
+
+Exemplos:
+
+Computador
+Projetor
+Monitor
+Teclado
+Mouse
+Impressora
+Switch
+etc.
+
+O administrador deverá conseguir cadastrar e editar esses equipamentos.
+
+A interface deverá permitir visualizar os equipamentos de cada laboratório.
+
+16. Reservas
+Uma reserva deverá possuir pelo menos:
+
+id
+laboratorioId
+usuarioId
+data
+aula
+criadoEm
+atualizadoEm
+status
+
+Pode adicionar:
+
+observacao
+finalidade
+
+se isso for útil.
+
+Uma reserva representa:
+
+Professor X
+Laboratório Y
+Data Z
+Aula N
+
+17. Regra de conflito
+Nunca poderão existir duas reservas para o mesmo:
+
+laboratório + data + aula
+
+O backend deverá impedir isso.
+
+Essa proteção deverá existir também no banco de dados através de índice/constraint adequado sempre que possível.
+
+Não confiar somente em uma verificação no frontend.
+
+Exemplo:
+
+Lab 1
+10/03/2027
+Aula 3
+
+não pode ser reservado simultaneamente por dois professores.
+
+18. Reservas simultâneas em laboratórios diferentes
+Professores podem reservar laboratórios diferentes no mesmo horário caso as regras permitam.
+
+Exemplo:
+
+Professor A → Lab 1 → Aula 2
+Professor B → Lab 2 → Aula 2
+
+Isso é permitido.
+
+19. Tabela pública
+Deverá existir uma página pública que não exija login.
+
+Essa página é extremamente importante.
+
+Ela deverá mostrar a programação dos laboratórios.
+
+Deve permitir visualizar:
+
+datas;
+
+dias;
+
+aulas;
+
+laboratórios;
+
+professor/responsável pela reserva;
+
+disponibilidade.
+
+A interface deverá ser especialmente útil para professores.
+
+Exemplo visual:
+
+Horário	Lab 1	Lab 2	Lab 3	Lab 4	Lab Fund
+Aula 1	João	Livre	Maria	Livre	Pedro
+Aula 2	Livre	Ana	Livre	Carlos	Livre
+Aula 3	João	Livre	Livre	Livre	Ana
+
+Mostrar claramente:
+
+RESERVADO
+LIVRE
+
+A programação pública deverá permitir navegar pelas datas dentro da janela configurada.
+
+20. Segurança da tabela pública
+A tabela pública pode exibir o nome do responsável pela reserva, pois isso faz parte do requisito.
+
+Porém, não deverá expor:
+
+senha;
+
+hash da senha;
+
+tokens;
+
+email pessoal sem necessidade;
+
+informações administrativas;
+
+dados internos;
+
+regras privadas;
+
+informações sensíveis.
+
+Criar DTOs/respostas públicas específicas.
+
+Nunca retornar diretamente o documento completo do usuário.
+
+21. Autenticação
+Implementar autenticação segura.
+
+Pode utilizar:
+
+JWT;
+
+cookies HTTP-only;
+
+ou outra solução apropriada.
+
+Se utilizar JWT, considerar:
+
+expiração;
+
+refresh token, se necessário;
+
+proteção contra roubo;
+
+armazenamento adequado;
+
+middleware de autenticação.
+
+As senhas devem ser armazenadas usando hash seguro, como:
+
+bcrypt
+
+ou algoritmo equivalente apropriado.
+
+Nunca armazenar senha em texto puro.
+
+22. Autorização
+Implementar autorização no backend.
+
+Sugestão de papéis:
+
+ALUNO
+PROFESSOR
+ADMIN
+
+E estados:
+
+PENDENTE
+ATIVO
+BLOQUEADO
+
+Não misturar papel com estado de aprovação de forma confusa.
+
+Exemplo:
+
+role = PROFESSOR
+status = PENDENTE
+
+significa professor ainda não aprovado.
+
+Depois:
+
+role = PROFESSOR
+status = ATIVO
+
+significa professor aprovado.
+
+23. Regra especial para administrador
+O administrador não deve depender das regras normais de professor para realizar operações administrativas.
+
+Entretanto, para reservas, o sistema deve definir claramente se o admin:
+
+pode reservar sem restrições;
+
+ou segue as mesmas regras dos professores.
+
+Implementar inicialmente o comportamento mais coerente com a necessidade escolar e documentar a decisão em Contexto.md.
+
+Se houver dúvida que afete significativamente a arquitetura, faça uma pergunta antes de implementar. Caso seja possível resolver de forma segura e configurável, prefira a solução configurável.
+
+24. Painel do professor
+Depois de aprovado, o professor deverá ter acesso a um painel.
+
+O painel deverá permitir:
+
+visualizar sua situação;
+
+visualizar suas regras;
+
+visualizar datas autorizadas;
+
+visualizar reservas;
+
+criar reserva;
+
+cancelar suas reservas;
+
+consultar disponibilidade;
+
+visualizar a programação pública.
+
+Ao tentar criar uma reserva, o sistema deve informar claramente por que ela foi aceita ou recusada.
+
+Exemplos:
+
+Reserva realizada com sucesso.
+
+ou:
+
+Não é possível reservar este horário porque o laboratório já está ocupado.
+
+ou:
+
+Esta data está fora da sua janela de programação.
+
+ou:
+
+Você não possui autorização regular para esta semana.
+Porém, a regra de antecedência excepcional permite reservas até 1 dia antes.
+
+25. Painel administrativo
+Criar painel administrativo com áreas para:
+
+Usuários
+listar;
+
+buscar;
+
+filtrar;
+
+cadastrar;
+
+editar;
+
+excluir;
+
+aprovar professor;
+
+bloquear;
+
+desbloquear;
+
+promover;
+
+rebaixar.
+
+Laboratórios
+listar;
+
+cadastrar;
+
+editar;
+
+ativar;
+
+desativar.
+
+Equipamentos
+listar;
+
+cadastrar;
+
+editar;
+
+remover/desativar.
+
+Reservas
+visualizar todas;
+
+filtrar por data;
+
+filtrar por professor;
+
+filtrar por laboratório;
+
+cancelar/excluir;
+
+visualizar detalhes.
+
+Regras
+criar;
+
+editar;
+
+excluir;
+
+associar ao professor;
+
+configurar dias;
+
+configurar semanas;
+
+configurar períodos;
+
+configurar exceções.
+
+Configurações
+Permitir alterar:
+
+quantidade de semanas disponíveis
+antecedência excepcional
+dias úteis
+quantidade de aulas
+duração das aulas
+
+Não necessariamente todas precisam estar na primeira versão da interface, mas a arquitetura deve permitir evolução.
+
+26. Modelo de regras
+Não criar um sistema rígido demais.
+
+Uma possível estrutura:
+
+ReservationRule
+
+id
+professorId
+nome
+tipo
+diasSemana[]
+semanas[]
+dataInicio
+dataFim
+antecedenciaExcepcional
+ativo
+criadoEm
+atualizadoEm
+
+Mas adapte a estrutura se uma modelagem melhor for encontrada.
+
+O importante é permitir:
+
+regras recorrentes;
+
+regras por período;
+
+regras por semana;
+
+regras por dia;
+
+ativação/desativação;
+
+múltiplas regras por professor.
+
+27. Configurações globais
+Criar uma entidade de configurações do sistema.
+
+Exemplo:
+
+SystemSettings
+
+reservationWindowWeeks
+exceptionAdvanceDays
+schoolDays[]
+lessons[]
+
+Isso permitirá que o administrador altere as regras sem alterar código.
+
+Evite hardcode de regras de negócio.
+
+28. Datas e timezone
+Considerar corretamente o timezone da escola.
+
+Como o projeto será utilizado no Brasil, definir explicitamente o timezone da aplicação.
+
+Evitar problemas clássicos de:
+
+UTC
+vs
+horário local
+
+Principalmente nas reservas.
+
+Datas de reserva devem ser tratadas como datas do calendário escolar, e não simplesmente como timestamps arbitrários.
+
+Documentar a estratégia utilizada.
+
+29. Validações
+Validar todas as entradas no backend.
+
+Exemplos:
+
+email válido;
+
+senha com requisitos mínimos;
+
+data válida;
+
+aula existente;
+
+laboratório existente;
+
+professor autorizado;
+
+data dentro da janela;
+
+regra válida;
+
+usuário existente;
+
+reserva sem conflito.
+
+Não confiar em validações do frontend.
+
+30. Tratamento de erros
+A API deve possuir respostas consistentes.
+
+Exemplo:
+
+{
+  "success": false,
+  "error": {
+    "code": "RESERVATION_CONFLICT",
+    "message": "O laboratório já está reservado para esta aula."
+  }
+}
+
+Criar códigos de erro úteis.
+
+Exemplos:
+
+AUTH_INVALID_CREDENTIALS
+AUTH_UNAUTHORIZED
+USER_NOT_FOUND
+USER_NOT_APPROVED
+RESERVATION_CONFLICT
+RESERVATION_OUTSIDE_WINDOW
+RESERVATION_NOT_ALLOWED
+LAB_NOT_FOUND
+RULE_NOT_FOUND
+VALIDATION_ERROR
+
+31. API
+Criar endpoints REST organizados.
+
+Exemplos esperados:
+
+POST   /api/auth/register
+POST   /api/auth/login
+POST   /api/auth/logout
+GET    /api/auth/me
+
+Usuários:
+
+GET    /api/users
+GET    /api/users/:id
+POST   /api/users
+PATCH  /api/users/:id
+DELETE /api/users/:id
+
+Reservas:
+
+GET    /api/reservations
+GET    /api/reservations/:id
+POST   /api/reservations
+PATCH  /api/reservations/:id
+DELETE /api/reservations/:id
+
+Laboratórios:
+
+GET    /api/labs
+POST   /api/labs
+PATCH  /api/labs/:id
+DELETE /api/labs/:id
+
+Equipamentos:
+
+GET    /api/labs/:id/equipments
+POST   /api/labs/:id/equipments
+PATCH  /api/equipments/:id
+DELETE /api/equipments/:id
+
+Regras:
+
+GET    /api/rules
+POST   /api/rules
+GET    /api/rules/:id
+PATCH  /api/rules/:id
+DELETE /api/rules/:id
+
+Configurações:
+
+GET    /api/settings
+PATCH  /api/settings
+
+Programação pública:
+
+GET /api/public/schedule
+
+Os endpoints podem ser reorganizados se houver uma arquitetura REST melhor.
+
+32. Testes
+Testar o sistema de maneira real.
+
+Não considerar a tarefa concluída somente porque o servidor iniciou.
+
+Criar testes automatizados para as regras mais importantes.
+
+Principalmente:
+
+Autenticação
+cadastro;
+
+login;
+
+senha incorreta;
+
+usuário bloqueado;
+
+professor pendente.
+
+Permissões
+aluno não pode reservar;
+
+professor pendente não pode reservar;
+
+professor aprovado pode reservar;
+
+admin pode administrar usuários;
+
+aluno não acessa endpoints administrativos.
+
+Reservas
+reserva válida;
+
+reserva duplicada;
+
+laboratório ocupado;
+
+laboratório diferente no mesmo horário;
+
+data fora da janela;
+
+professor fora do período autorizado;
+
+exceção de antecedência;
+
+alteração da regra de antecedência;
+
+alteração da janela de semanas.
+
+Administrador
+aprovação;
+
+promoção;
+
+rebaixamento;
+
+proteção contra remoção do último admin.
+
+Regras
+criar;
+
+editar;
+
+remover;
+
+múltiplas regras;
+
+períodos;
+
+dias;
+
+semanas.
+
+Programação pública
+consulta sem autenticação;
+
+reservas aparecem;
+
+horários livres aparecem;
+
+dados privados não aparecem.
+
+33. Testes de integração
+Sempre que possível, executar testes de integração contra um banco de teste.
+
+Testar o fluxo completo:
+
+Cadastro de professor
+↓
+Professor fica pendente
+↓
+Admin acessa
+↓
+Admin aprova
+↓
+Professor faz login
+↓
+Professor consulta disponibilidade
+↓
+Professor cria reserva
+↓
+Outro professor tenta reservar o mesmo laboratório/aula
+↓
+Sistema rejeita
+↓
+Programação pública mostra a reserva
+
+Também testar:
+
+Admin altera antecedência
+↓
+Regra passa a valer
+↓
+Professor consegue/não consegue reservar conforme nova regra
+
+34. Concorrência
+Considerar o problema de duas requisições simultâneas tentando reservar o mesmo laboratório.
+
+Exemplo:
+
+Professor A → POST /reservations
+Professor B → POST /reservations
+
+ao mesmo tempo.
+
+O sistema deve garantir consistência.
+
+Utilizar mecanismos apropriados do MongoDB, principalmente índices únicos e/ou transações quando necessário.
+
+35. Segurança
+Considerar pelo menos:
+
+hash de senha;
+
+autenticação;
+
+autorização;
+
+validação de entrada;
+
+CORS;
+
+rate limiting para autenticação;
+
+proteção contra enumeração de usuários quando aplicável;
+
+sanitização;
+
+headers de segurança;
+
+controle de acesso;
+
+não expor stack traces em produção;
+
+não retornar informações sensíveis;
+
+variáveis de ambiente para secrets;
+
+logs sem senhas/tokens.
+
+Nunca colocar:
+
+JWT_SECRET
+MONGO_URI
+senha
+tokens
+
+diretamente no código.
+
+36. Variáveis de ambiente
+Criar .env.example.
+
+Exemplo:
+
+MONGODB_URI=
+JWT_SECRET=
+JWT_EXPIRES_IN=
+NODE_ENV=
+CORS_ORIGIN=
+TIMEZONE=
+
+Nunca versionar .env.
+
+37. Seed inicial
+Criar uma forma segura de inicializar o sistema.
+
+O sistema deverá conseguir criar:
+
+os 5 laboratórios;
+
+as 6 aulas;
+
+configurações padrão;
+
+primeiro administrador.
+
+Não deixar uma senha de administrador hardcoded no código.
+
+Se houver script de seed, ele deverá aceitar credenciais/configurações por variável de ambiente ou argumentos seguros.
+
+38. Frontend
+O frontend deve ser simples, funcional e responsivo.
+
+Criar pelo menos:
+
+Página pública
+Login
+Cadastro
+Painel do professor
+Painel administrativo
+Página de reservas
+Página de laboratórios
+Página de equipamentos
+Página de regras
+Página de usuários
+
+A página pública deve ser acessível sem login.
+
+39. UX da reserva
+O professor deve conseguir escolher:
+
+Data
+↓
+Laboratório
+↓
+Aula
+↓
+Confirmar
+
+Antes da confirmação, mostrar:
+
+Professor:
+João
+
+Data:
+12/04/2027
+
+Laboratório:
+Lab 2
+
+Aula:
+3
+
+Horário:
+08:40 - 09:30
+
+Status:
+Disponível
+
+Depois confirmar a operação.
+
+Se não puder reservar, explicar claramente o motivo.
+
+40. Programação pública
+Criar uma visualização semelhante a uma grade.
+
+Filtros:
+
+semana;
+
+data;
+
+laboratório.
+
+Possivelmente:
+
+Semana anterior
+Semana atual
+Próxima semana
+
+Respeitar a janela pública configurada.
+
+41. Responsividade
+A interface deverá funcionar em:
+
+computador;
+
+notebook;
+
+tablet;
+
+celular.
+
+A tabela pública deve ser adaptada para telas pequenas.
+
+42. Código
+Escrever código:
+
+modular;
+
+legível;
+
+reutilizável;
+
+com responsabilidades bem separadas;
+
+sem duplicação desnecessária;
+
+com tratamento consistente de erros.
+
+Evitar concentrar toda a lógica em controllers.
+
+Separar adequadamente:
+
+routes
+controllers
+services
+repositories
+models
+middlewares
+validators
+utils
+
+se isso fizer sentido para o projeto.
+
+43. Regra importante sobre regras de negócio
+As regras abaixo não devem ficar espalhadas pelo frontend:
+
+antecedência;
+
+semanas;
+
+autorização;
+
+conflitos;
+
+permissões;
+
+aprovação;
+
+disponibilidade.
+
+O backend deve ser a fonte de verdade.
+
+O frontend apenas apresenta e facilita a utilização.
+
+44. Desenvolvimento incremental
+Não tente escrever todo o sistema de uma vez.
+
+Trabalhe em etapas.
+
+Para cada etapa:
+
+analisar;
+
+implementar;
+
+testar;
+
+corrigir;
+
+atualizar Roadmap.md;
+
+atualizar Contexto.md;
+
+atualizar api.md, quando houver alteração na API;
+
+revisar se os requisitos anteriores continuam funcionando.
+
+45. Antes de começar
+Primeiro analise todo o projeto existente.
+
+Se já houver arquivos, não sobrescreva tudo indiscriminadamente.
+
+Verifique:
+
+estrutura;
+
+código;
+
+dependências;
+
+configuração;
+
+documentação;
+
+banco;
+
+testes.
+
+Depois determine o estado atual.
+
+Se estiver iniciando do zero, crie a estrutura necessária.
+
+46. Ordem recomendada de implementação
+Siga aproximadamente esta sequência:
+
+Fase 1 — Fundação
+estrutura do projeto;
+
+backend;
+
+frontend;
+
+configuração;
+
+conexão MongoDB;
+
+variáveis de ambiente;
+
+documentação inicial.
+
+Fase 2 — Usuários
+modelo;
+
+cadastro;
+
+login;
+
+autenticação;
+
+autorização;
+
+papéis;
+
+status.
+
+Fase 3 — Administração
+painel admin;
+
+gerenciamento de usuários;
+
+aprovação de professores;
+
+promoção/rebaixamento;
+
+proteção do último admin.
+
+Fase 4 — Laboratórios
+CRUD;
+
+seed dos 5 laboratórios;
+
+ativação/desativação.
+
+Fase 5 — Aulas
+configuração das 6 aulas;
+
+dias úteis;
+
+duração de 50 minutos.
+
+Fase 6 — Configurações
+janela de semanas;
+
+antecedência excepcional;
+
+configurações globais.
+
+Fase 7 — Regras dos professores
+regras;
+
+dias;
+
+semanas;
+
+períodos;
+
+exceções.
+
+Fase 8 — Reservas
+criação;
+
+edição;
+
+cancelamento;
+
+conflitos;
+
+validação;
+
+concorrência.
+
+Fase 9 — Programação pública
+grade;
+
+disponibilidade;
+
+reservas;
+
+filtros.
+
+Fase 10 — Equipamentos
+cadastro;
+
+edição;
+
+visualização por laboratório.
+
+Fase 11 — Frontend completo
+UX;
+
+responsividade;
+
+mensagens;
+
+estados de carregamento;
+
+tratamento de erros.
+
+Fase 12 — Testes
+unitários;
+
+integração;
+
+autorização;
+
+regras;
+
+concorrência.
+
+Fase 13 — Segurança
+revisão;
+
+CORS;
+
+rate limit;
+
+headers;
+
+secrets;
+
+validação.
+
+Fase 14 — Deploy
+Vercel;
+
+variáveis de ambiente;
+
+MongoDB;
+
+CORS;
+
+testes de produção.
+
+Fase 15 — Revisão final
+Verificar todos os requisitos deste documento.
+
+47. Critério de conclusão
+O projeto somente será considerado concluído quando:
+
+backend funcionar;
+
+frontend funcionar;
+
+MongoDB estiver integrado;
+
+autenticação funcionar;
+
+autorização funcionar;
+
+alunos tiverem acesso somente à programação;
+
+professores pendentes não puderem utilizar o sistema;
+
+admin puder aprovar professores;
+
+admin puder gerenciar usuários;
+
+admin puder promover/rebaixar usuários;
+
+houver proteção do último administrador;
+
+existirem os 5 laboratórios;
+
+existirem as 6 aulas;
+
+existirem regras de dias/semanas;
+
+existir exceção de antecedência;
+
+a antecedência puder ser alterada pelo admin;
+
+a janela de semanas puder ser alterada pelo admin;
+
+reservas conflitantes forem bloqueadas;
+
+a programação pública funcionar;
+
+equipamentos puderem ser listados;
+
+testes importantes existirem e passarem;
+
+documentação estiver atualizada;
+
+Roadmap.md estiver atualizado;
+
+Contexto.md estiver atualizado;
+
+api.md estiver atualizado;
+
+.env.example existir;
+
+o sistema estiver preparado para deploy na Vercel.
+
+48. Comportamento esperado do agente
+Durante o desenvolvimento:
+
+não invente requisitos sem necessidade;
+
+quando houver uma ambiguidade pequena, escolha a solução mais simples e documente;
+
+quando houver uma ambiguidade que altere significativamente a regra de negócio, pergunte;
+
+não considere código "pronto" sem testar;
+
+não esconda erros;
+
+não remova funcionalidades existentes para resolver problemas sem avaliar consequências;
+
+mantenha compatibilidade entre frontend e backend;
+
+atualize a documentação continuamente;
+
+priorize segurança e consistência dos dados.
+
+Sempre que encontrar um bug:
+
+reproduza;
+
+identifique a causa;
+
+corrija;
+
+execute novamente os testes relacionados;
+
+verifique regressões;
+
+documente se for uma decisão relevante.
+
+49. Entrega final
+Ao finalizar o desenvolvimento, forneça um resumo contendo:
+
+STATUS DO PROJETO
+
+Backend:
+[status]
+
+Frontend:
+[status]
+
+Banco:
+[status]
+
+Autenticação:
+[status]
+
+Reservas:
+[status]
+
+Regras:
+[status]
+
+Admin:
+[status]
+
+Testes:
+[status]
+
+Deploy:
+[status]
+
+Depois apresente:
+
+Funcionalidades implementadas
+Lista objetiva.
+
+Testes executados
+Informar exatamente quais testes foram executados e seus resultados.
+
+Pendências
+Informar qualquer coisa que ainda não esteja pronta.
+
+Como executar localmente
+Comandos necessários.
+
+Como configurar o MongoDB
+Instruções.
+
+Como executar frontend e backend
+Instruções.
+
+Como fazer deploy na Vercel
+Instruções.
+
+Credenciais de desenvolvimento
+Se existir usuário de teste, nunca inventar ou expor credenciais reais. Usar apenas credenciais criadas especificamente para desenvolvimento/testes e informar claramente que são de teste.
+
+50. Regra final
+Você é responsável por entregar uma aplicação funcional e testada, e não apenas arquivos de código.
+
+Antes de declarar o projeto concluído, faça uma revisão completa dos requisitos deste documento e confirme que cada um foi:
+
+[ ] implementado
+[ ] testado
+[ ] documentado
+
+Mantenha Roadmap.md, Contexto.md e api.md sincronizados com o código durante todo o desenvolvimento.
+
+Comece agora pela análise do projeto existente e pela definição da arquitetura. Em seguida, implemente o sistema de forma incremental, seguindo o roadmap e validando cada etapa antes de avançar.

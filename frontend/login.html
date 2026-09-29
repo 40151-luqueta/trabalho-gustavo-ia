@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Acesso ao Sistema | Laboratórios Escolares</title>
+  <meta name="description" content="Acesse ou crie sua conta para gerenciar e reservar laboratórios.">
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <style>
+    .auth-wrapper {
+      min-height: calc(100vh - 80px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+    }
+    .auth-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-lg);
+      padding: 2.25rem;
+      width: 100%;
+      max-width: 440px;
+      box-shadow: var(--shadow-md);
+      backdrop-filter: blur(12px);
+    }
+    .auth-header {
+      text-align: center;
+      margin-bottom: 1.75rem;
+    }
+    .role-selector {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+    .role-option {
+      flex: 1;
+      text-align: center;
+      padding: 0.65rem 0.5rem;
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-size: 0.88rem;
+      font-weight: 600;
+      transition: var(--transition);
+      background: var(--bg-glass);
+    }
+    .role-option.selected {
+      border-color: var(--primary);
+      background: var(--primary-light);
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navegação Superior -->
+  <header class="navbar">
+    <a href="/index.html" class="nav-brand">
+      <span class="brand-badge">LABS</span>
+      <span>Laboratórios de Informática</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="/index.html">← Voltar à Programação Pública</a></li>
+    </ul>
+  </header>
+
+  <div class="auth-wrapper">
+    <div class="auth-card">
+      <div class="auth-header">
+        <h2 style="font-size: 1.5rem; font-weight: 800; color: #fff;">Acesso ao Sistema</h2>
+        <p style="font-size: 0.88rem; color: var(--text-muted); margin-top: 0.35rem;">Entre na sua conta ou realize um novo cadastro</p>
+      </div>
+
+      <!-- Abas de Alternância -->
+      <div class="tabs-header" style="justify-content: center;">
+        <button class="tab-btn active" data-tab="tab-login">Entrar</button>
+        <button class="tab-btn" data-tab="tab-register">Criar Conta</button>
+      </div>
+
+      <!-- Aba 1: Formulário de Login -->
+      <div id="tab-login" class="tab-content active">
+        <form id="form-login">
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label class="form-label" for="login-email">Email institucional ou pessoal:</label>
+            <input type="email" id="login-email" class="input-control" required placeholder="ex: professor@escola.com">
+          </div>
+
+          <div class="form-group" style="margin-bottom: 1.5rem;">
+            <label class="form-label" for="login-senha">Senha:</label>
+            <input type="password" id="login-senha" class="input-control" required placeholder="••••••••">
+          </div>
+
+          <button type="submit" id="btn-login-submit" class="btn btn-primary" style="width: 100%;">Entrar no Sistema</button>
+        </form>
+      </div>
+
+      <!-- Aba 2: Formulário de Cadastro -->
+      <div id="tab-register" class="tab-content">
+        <form id="form-register">
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label class="form-label" for="reg-nome">Nome Completo:</label>
+            <input type="text" id="reg-nome" class="input-control" required placeholder="ex: Prof. Roberto Silva">
+          </div>
+
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label class="form-label" for="reg-email">Email:</label>
+            <input type="email" id="reg-email" class="input-control" required placeholder="ex: roberto@escola.com">
+          </div>
+
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label class="form-label" for="reg-senha">Criar Senha:</label>
+            <input type="password" id="reg-senha" class="input-control" required minlength="6" placeholder="Mínimo 6 caracteres">
+          </div>
+
+          <div class="form-group" style="margin-bottom: 1.25rem;">
+            <label class="form-label">Você é:</label>
+            <div class="role-selector">
+              <div class="role-option selected" data-role="ALUNO" id="role-opt-aluno">
+                🎓 Aluno
+              </div>
+              <div class="role-option" data-role="PROFESSOR" id="role-opt-prof">
+                👨‍🏫 Professor
+              </div>
+            </div>
+            <div id="role-helper-text" class="form-hint" style="margin-top: 0.5rem; line-height: 1.4;">
+              Alunos têm acesso para consultar horários e disponibilidade dos laboratórios.
+            </div>
+          </div>
+
+          <button type="submit" id="btn-register-submit" class="btn btn-primary" style="width: 100%;">Concluir Cadastro</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { login, register } from '/js/auth.js';
+
+    let selectedRole = 'ALUNO';
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Configurar abas
+      const tabBtns = document.querySelectorAll('.tab-btn');
+      tabBtns.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          tabBtns.forEach((b) => b.classList.remove('active'));
+          document.querySelectorAll('.tab-content').forEach((c) => c.classList.remove('active'));
+
+          btn.classList.add('active');
+          document.getElementById(btn.getAttribute('data-tab'))?.classList.add('active');
+        });
+      });
+
+      // Seletor de Papel
+      const optAluno = document.getElementById('role-opt-aluno');
+      const optProf = document.getElementById('role-opt-prof');
+      const helperText = document.getElementById('role-helper-text');
+
+      optAluno?.addEventListener('click', () => {
+        selectedRole = 'ALUNO';
+        optAluno.classList.add('selected');
+        optProf.classList.remove('selected');
+        helperText.textContent = 'Alunos têm acesso para consultar horários e disponibilidade dos laboratórios.';
+      });
+
+      optProf?.addEventListener('click', () => {
+        selectedRole = 'PROFESSOR';
+        optProf.classList.add('selected');
+        optAluno.classList.remove('selected');
+        helperText.textContent = 'Professores recém-cadastrados passam por análise e aprovação prévia do administrador antes de realizar reservas.';
+      });
+
+      // Submit do Login
+      document.getElementById('form-login')?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('login-email').value;
+        const senha = document.getElementById('login-senha').value;
+        const btn = document.getElementById('btn-login-submit');
+
+        try {
+          btn.disabled = true;
+          btn.textContent = 'Autenticando...';
+          const user = await login(email, senha);
+
+          // Redirecionamento baseado no papel
+          if (user.role === 'ADMIN') {
+            window.location.href = '/admin.html';
+          } else if (user.role === 'PROFESSOR') {
+            window.location.href = '/professor.html';
+          } else {
+            window.location.href = '/index.html';
+          }
+        } catch {
+          // Erro já exibido pelo toast
+        } finally {
+          btn.disabled = false;
+          btn.textContent = 'Entrar no Sistema';
+        }
+      });
+
+      // Submit do Cadastro
+      document.getElementById('form-register')?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const nome = document.getElementById('reg-nome').value;
+        const email = document.getElementById('reg-email').value;
+        const senha = document.getElementById('reg-senha').value;
+        const btn = document.getElementById('btn-register-submit');
+
+        try {
+          btn.disabled = true;
+          btn.textContent = 'Cadastrando...';
+          const user = await register(nome, email, senha, selectedRole);
+
+          if (user.role === 'PROFESSOR') {
+            // Volta para a aba de login explicando a aprovação
+            document.querySelector('.tab-btn[data-tab="tab-login"]')?.click();
+          } else {
+            // Aluno já pode logar
+            await login(email, senha);
+            window.location.href = '/index.html';
+          }
+        } catch {
+          // Erro já tratado no toast
+        } finally {
+          btn.disabled = false;
+          btn.textContent = 'Concluir Cadastro';
+        }
+      });
+    });
+  </script>
+</body>
+</html>

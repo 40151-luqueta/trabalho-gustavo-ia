@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Programação dos Laboratórios de Informática | Escola</title>
+  <meta name="description" content="Quadro de horários e disponibilidade pública dos laboratórios de informática da escola.">
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="/css/components.css">
+</head>
+<body>
+
+  <!-- Barra de Navegação Superior -->
+  <header class="navbar">
+    <a href="/index.html" class="nav-brand">
+      <span class="brand-badge">LABS</span>
+      <span>Laboratórios de Informática</span>
+    </a>
+    <ul class="nav-links" id="nav-user-actions">
+      <li><a href="/login.html" class="btn btn-primary btn-sm">Entrar / Cadastrar</a></li>
+    </ul>
+  </header>
+
+  <main class="container">
+    <!-- Cabeçalho da Página -->
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Programação Pública dos Laboratórios</h1>
+        <p class="page-subtitle">Consulte em tempo real a ocupação, aulas e disponibilidade dos 5 laboratórios de informática.</p>
+      </div>
+      <div>
+        <span class="role-tag role-aluno">Acesso Livre</span>
+      </div>
+    </div>
+
+    <!-- Controles de Navegação e Data -->
+    <section class="controls-bar">
+      <div class="date-navigator">
+        <button id="btn-prev-day" class="btn btn-secondary btn-sm" title="Dia anterior">◀ Dia Anterior</button>
+        <button id="btn-today" class="btn btn-secondary btn-sm" title="Ir para hoje">Hoje</button>
+        <button id="btn-next-day" class="btn btn-secondary btn-sm" title="Próximo dia">Próximo Dia ▶</button>
+        <div id="current-date-display" class="current-date-badge">Carregando...</div>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 0.5rem;">
+        <label for="filter-date" style="font-size: 0.85rem; color: var(--text-muted);">Ir para data:</label>
+        <input type="date" id="filter-date" class="input-control">
+      </div>
+    </section>
+
+    <!-- Indicador de Carregamento -->
+    <div id="schedule-loading" style="text-align: center; padding: 2rem; color: var(--text-dim); display: none;">
+      Carregando programação dos laboratórios...
+    </div>
+
+    <!-- Tabela Pública / Grade de Horários -->
+    <section class="schedule-container">
+      <div class="schedule-table-wrapper">
+        <table class="schedule-table" id="schedule-table">
+          <thead>
+            <tr id="schedule-header-row">
+              <th class="lesson-col">Horário / Aula</th>
+              <th>Lab 1</th>
+              <th>Lab 2</th>
+              <th>Lab 3</th>
+              <th>Lab 4</th>
+              <th>Lab Fund</th>
+            </tr>
+          </thead>
+          <tbody id="schedule-body">
+            <!-- Linhas preenchidas via public.js -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Legenda e Dicas -->
+    <section class="dashboard-card" style="margin-top: 1rem;">
+      <h3 style="font-size: 1rem; color: #fff; margin-bottom: 0.5rem;">Legenda da Grade:</h3>
+      <div style="display: flex; gap: 1.5rem; flex-wrap: wrap; font-size: 0.88rem;">
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <span style="display: inline-block; width: 12px; height: 12px; border-radius: 3px; background: #34d399;"></span>
+          <span><strong>LIVRE:</strong> Horário disponível para agendamento por professores autorizados.</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <span style="display: inline-block; width: 12px; height: 12px; border-radius: 3px; background: #fb7185;"></span>
+          <span><strong>RESERVADO:</strong> Horário já agendado (exibe o nome do professor responsável).</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <span>🔍</span>
+          <span>Clique no nome de qualquer laboratório para ver os <strong>equipamentos instalados</strong>.</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modal de Detalhes e Equipamentos do Laboratório -->
+  <div class="modal-overlay" id="modal-lab-details">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modal-lab-title">Equipamentos do Laboratório</h3>
+        <button class="modal-close" onclick="window.closeModal('modal-lab-details')">&times;</button>
+      </div>
+      <div class="modal-body" id="modal-lab-content">
+        Carregando...
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary btn-sm" onclick="window.closeModal('modal-lab-details')">Fechar</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { setupNavHeader } from '/js/auth.js';
+    import { initPublicSchedule } from '/js/public.js';
+
+    document.addEventListener('DOMContentLoaded', () => {
+      setupNavHeader();
+      initPublicSchedule();
+    });
+  </script>
+</body>
+</html>
