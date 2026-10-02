@@ -105,3 +105,19 @@ export function getSchoolDaysInWindow(startDateStr: string, totalWeeks: number):
 
   return dates;
 }
+
+/**
+ * Retorna o horário atual no formato 'HH:mm' considerando o timezone (ex: America/Sao_Paulo).
+ */
+export function getCurrentTimeString(timezone = 'America/Sao_Paulo', date?: Date): string {
+  const now = date || new Date();
+  const parts = new Intl.DateTimeFormat('en-GB', {
+    timeZone: timezone,
+    hour: '2-digit',
+    minute: '2-digit',
+    hourCycle: 'h23'
+  }).formatToParts(now);
+  const hour = parts.find((p) => p.type === 'hour')?.value || '00';
+  const minute = parts.find((p) => p.type === 'minute')?.value || '00';
+  return `${hour.padStart(2, '0')}:${minute.padStart(2, '0')}`;
+}

@@ -3,7 +3,7 @@ import { config } from '../config/env';
 import { User } from '../models/User';
 import { Lab } from '../models/Lab';
 import { Equipment } from '../models/Equipment';
-import { SystemSettings } from '../models/SystemSettings';
+import { SystemSettings, DEFAULT_LESSONS } from '../models/SystemSettings';
 
 export async function runSeed(options: { silent?: boolean } = {}) {
   const log = (msg: string) => {
@@ -23,18 +23,14 @@ export async function runSeed(options: { silent?: boolean } = {}) {
       exceptionAdvanceDays: 1,
       schoolDays: [1, 2, 3, 4, 5],
       timezone: config.timezone,
-      lessons: [
-        { numero: 1, nome: 'Aula 1', horarioInicio: '07:00', horarioFim: '07:50' },
-        { numero: 2, nome: 'Aula 2', horarioInicio: '07:50', horarioFim: '08:40' },
-        { numero: 3, nome: 'Aula 3', horarioInicio: '08:55', horarioFim: '09:45' },
-        { numero: 4, nome: 'Aula 4', horarioInicio: '09:45', horarioFim: '10:35' },
-        { numero: 5, nome: 'Aula 5', horarioInicio: '10:50', horarioFim: '11:40' },
-        { numero: 6, nome: 'Aula 6', horarioInicio: '11:40', horarioFim: '12:30' }
-      ]
+      lessons: DEFAULT_LESSONS
     });
     log(' -> Configurações globais criadas com sucesso.');
   } else {
-    log(' -> Configurações globais já existentes.');
+    // Sincronizar horários oficiais escolares (3 antes das 9:45, intervalo de 20 min até 10:05, 3 depois)
+    settings.lessons = DEFAULT_LESSONS;
+    await settings.save();
+    log(' -> Configurações globais sincronizadas com os novos horários escolares.');
   }
 
   // 2. Inicializar os 5 Laboratórios Obrigatórios
@@ -144,7 +140,26 @@ export async function runSeed(options: { silent?: boolean } = {}) {
     });
     log(` -> Administrador inicial criado com sucesso: ${admin.email}`);
   } else {
-    log(` -> Administrador já existente: ${admin.email}`);
+    let modified = false;
+    if (admin.role !== 'ADMIN') {
+      admin.role = 'ADMIN';
+      modified = true;
+    }
+    if (admin.status !== 'ATIVO') {
+      admin.status = 'ATIVO';
+      modified = true;
+    }
+    const isPasswordValid = await admin.comparePassword(config.adminInitial.senha);
+    if (!isPasswordValid) {
+      admin.senha = config.adminInitial.senha;
+      modified = true;
+    }
+    if (modified) {
+      await admin.save();
+      log(` -> Administrador inicial sincronizado: ${admin.email}`);
+    } else {
+      log(` -> Administrador já existente: ${admin.email}`);
+    }
   }
 
   log('--- SEED CONCLUÍDO COM SUCESSO ---');

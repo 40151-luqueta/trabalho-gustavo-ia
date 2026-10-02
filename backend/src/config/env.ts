@@ -26,8 +26,8 @@ export const config = {
   corsOrigin: process.env.CORS_ORIGIN || '*',
   timezone: process.env.TIMEZONE || 'America/Sao_Paulo',
   adminInitial: {
-    nome: process.env.ADMIN_INITIAL_NAME || 'Administrador do Sistema',
-    email: process.env.ADMIN_INITIAL_EMAIL || 'admin@escola.com',
-    senha: process.env.ADMIN_INITIAL_PASSWORD || 'AdminSeguro@2027'
+    nome: process.env.ADMIN_INITIAL_NAME || 'Administrador Raphael Di Santo',
+    email: process.env.ADMIN_INITIAL_EMAIL || '40151@raphaeldisanto.com.br',
+    senha: process.env.ADMIN_INITIAL_PASSWORD || '40151@raphaeldisanto.com.br'
   }
 };

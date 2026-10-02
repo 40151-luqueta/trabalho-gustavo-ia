@@ -98,24 +98,40 @@ function renderScheduleTable(data) {
   // Montar linhas com as Aulas
   tableBody.innerHTML = data.grade
     .map((aulaRow) => {
+      const isPastRow = !!aulaRow.passada;
       return `
-        <tr>
+        <tr class="${isPastRow ? 'lesson-row-past' : ''}">
           <td class="lesson-col">
             <div class="lesson-name">${aulaRow.nomeAula}</div>
             <div class="lesson-time">${aulaRow.horario}</div>
+            ${isPastRow ? '<div style="font-size: 0.7rem; color: var(--text-dim); margin-top: 2px;">Encerrado</div>' : ''}
           </td>
           ${aulaRow.slots
             .map((slot) => {
               const isFree = slot.status === 'LIVRE';
+              const isPast = isPastRow || !!slot.passado;
               const user = getCurrentUser();
-              const canClick = isFree && user && (user.role === 'PROFESSOR' || user.role === 'ADMIN');
+              const canClick = isFree && !isPast && user && (user.role === 'PROFESSOR' || user.role === 'ADMIN');
+
+              let badgeText = '■ RESERVADO';
+              let cardClass = 'status-busy';
+
+              if (isFree) {
+                if (isPast) {
+                  badgeText = '○ PASSADO';
+                  cardClass = 'status-past';
+                } else {
+                  badgeText = '● LIVRE';
+                  cardClass = 'status-free';
+                }
+              }
 
               return `
                 <td>
-                  <div class="slot-card ${isFree ? 'status-free' : 'status-busy'}" 
+                  <div class="slot-card ${cardClass}" 
                        ${canClick ? `style="cursor: pointer;" title="Clique para agendar" onclick="window.quickBook('${slot.laboratorioId}', '${data.data}', ${aulaRow.aula})"` : ''}>
                     <div class="slot-status-badge">
-                      <span>${isFree ? '● LIVRE' : '■ RESERVADO'}</span>
+                      <span>${badgeText}</span>
                     </div>
                     ${!isFree ? `<div class="slot-teacher" title="Responsável">${slot.responsavel || 'Professor'}</div>` : ''}
                     ${canClick ? `<div style="font-size: 0.72rem; color: var(--primary); font-weight: 700; margin-top: 2px;">+ Agendar</div>` : ''}

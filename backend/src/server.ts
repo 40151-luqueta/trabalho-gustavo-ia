@@ -1,11 +1,15 @@
 import { createApp } from './app';
 import { connectDB } from './config/db';
 import { config } from './config/env';
+import { runSeed } from './seed/seed';
 
 async function bootstrap() {
   try {
     console.log('[Iniciando] Conectando ao banco de dados MongoDB...');
     await connectDB();
+
+    console.log('[Deploy] Sincronizando dados iniciais e administrador...');
+    await runSeed({ silent: false });
 
     const app = createApp();
 

@@ -11,7 +11,8 @@ import {
   getDayOfWeek,
   getDayOfWeekName,
   getWeekOfMonth,
-  getTodayDateString
+  getTodayDateString,
+  getCurrentTimeString
 } from '../utils/dateUtils';
 
 export interface CreateReservationInput {
@@ -82,12 +83,23 @@ export class ReservationService {
     }
 
     // 5. Validação da aula
-    const aulaValida = sysSettings.lessons.some((l) => l.numero === Number(aula));
-    if (!aulaValida) {
+    const lesson = sysSettings.lessons.find((l) => l.numero === Number(aula));
+    if (!lesson) {
       return {
         allowed: false,
         reason: `Aula ${aula} inválida. O sistema possui as aulas de 1 a ${sysSettings.lessons.length}.`
       };
+    }
+
+    // 5.1. Validação de horário já passado no dia atual
+    if (diffDays === 0) {
+      const currentTime = getCurrentTimeString(sysSettings.timezone);
+      if (currentTime >= lesson.horarioInicio) {
+        return {
+          allowed: false,
+          reason: `Não é possível realizar reservas para horários que já passaram. A ${lesson.nome} iniciou às ${lesson.horarioInicio}.`
+        };
+      }
     }
 
     // 6. Validação do laboratório

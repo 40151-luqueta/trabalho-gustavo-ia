@@ -32,6 +32,15 @@ const lessonSchema = new Schema<ILesson>(
   { _id: false }
 );
 
+export const DEFAULT_LESSONS: ILesson[] = [
+  { numero: 1, nome: 'Aula 1', horarioInicio: '07:15', horarioFim: '08:05' },
+  { numero: 2, nome: 'Aula 2', horarioInicio: '08:05', horarioFim: '08:55' },
+  { numero: 3, nome: 'Aula 3', horarioInicio: '08:55', horarioFim: '09:45' },
+  { numero: 4, nome: 'Aula 4', horarioInicio: '10:05', horarioFim: '10:55' },
+  { numero: 5, nome: 'Aula 5', horarioInicio: '10:55', horarioFim: '11:45' },
+  { numero: 6, nome: 'Aula 6', horarioInicio: '11:45', horarioFim: '12:35' }
+];
+
 const systemSettingsSchema = new Schema<ISystemSettings, ISystemSettingsModel>(
   {
     singletonKey: {
@@ -53,14 +62,7 @@ const systemSettingsSchema = new Schema<ISystemSettings, ISystemSettingsModel>(
     },
     lessons: {
       type: [lessonSchema],
-      default: [
-        { numero: 1, nome: 'Aula 1', horarioInicio: '07:00', horarioFim: '07:50' },
-        { numero: 2, nome: 'Aula 2', horarioInicio: '07:50', horarioFim: '08:40' },
-        { numero: 3, nome: 'Aula 3', horarioInicio: '08:55', horarioFim: '09:45' },
-        { numero: 4, nome: 'Aula 4', horarioInicio: '09:45', horarioFim: '10:35' },
-        { numero: 5, nome: 'Aula 5', horarioInicio: '10:50', horarioFim: '11:40' },
-        { numero: 6, nome: 'Aula 6', horarioInicio: '11:40', horarioFim: '12:30' }
-      ]
+      default: DEFAULT_LESSONS
     },
     schoolDays: {
       type: [Number],

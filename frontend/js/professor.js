@@ -57,16 +57,34 @@ async function loadInitialData() {
     }
 
     // Preencher select de aulas
-    const aulaSelect = document.getElementById('res-aula');
-    if (aulaSelect && settingsCache?.lessons) {
-      aulaSelect.innerHTML = `
-        <option value="">Selecione a aula / horário...</option>
-        ${settingsCache.lessons.map((ls) => `<option value="${ls.numero}">${ls.nome} (${ls.horarioInicio} - ${ls.horarioFim})</option>`).join('')}
-      `;
-    }
+    updateAulaOptions();
   } catch (err) {
     showToast(err.message, 'error');
   }
+}
+
+function updateAulaOptions() {
+  const aulaSelect = document.getElementById('res-aula');
+  const dateInput = document.getElementById('res-date');
+  if (!aulaSelect || !settingsCache?.lessons) return;
+
+  const selectedDate = dateInput?.value;
+  const now = new Date();
+  const y = now.getFullYear();
+  const m = String(now.getMonth() + 1).padStart(2, '0');
+  const d = String(now.getDate()).padStart(2, '0');
+  const currentToday = `${y}-${m}-${d}`;
+  const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+  const currentVal = aulaSelect.value;
+  aulaSelect.innerHTML = `
+    <option value="">Selecione a aula / horário...</option>
+    ${settingsCache.lessons.map((ls) => {
+      const isPast = selectedDate === currentToday && currentTime >= ls.horarioInicio;
+      return `<option value="${ls.numero}">${ls.nome} (${ls.horarioInicio} - ${ls.horarioFim})${isPast ? ' (Horário Encerrado)' : ''}</option>`;
+    }).join('')}
+  `;
+  if (currentVal) aulaSelect.value = currentVal;
 }
 
 export async function loadMyReservations() {
@@ -223,7 +241,10 @@ function setupWizardListeners() {
     }
   };
 
-  dateInput?.addEventListener('change', checkEligibility);
+  dateInput?.addEventListener('change', () => {
+    updateAulaOptions();
+    checkEligibility();
+  });
   labSelect?.addEventListener('change', checkEligibility);
   aulaSelect?.addEventListener('change', checkEligibility);
   btnVerify?.addEventListener('click', checkEligibility);

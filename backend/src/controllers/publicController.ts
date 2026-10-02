@@ -8,7 +8,8 @@ import {
   isValidDateFormat,
   getDayOfWeek,
   getDayOfWeekName,
-  calculateDaysDifference
+  calculateDaysDifference,
+  getCurrentTimeString
 } from '../utils/dateUtils';
 
 export async function getPublicSchedule(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -61,8 +62,11 @@ export async function getPublicSchedule(req: Request, res: Response, next: NextF
     // Montar grade pública segura
     const dayOfWeek = getDayOfWeek(dataStr);
     const isSchoolDay = settings.schoolDays.includes(dayOfWeek);
+    const currentTime = getCurrentTimeString(settings.timezone);
 
     const grade = settings.lessons.map((lesson) => {
+      const isPast = diffDays < 0 || (diffDays === 0 && currentTime >= lesson.horarioInicio);
+
       const slots = labs.map((lab) => {
         const key = `${lab._id.toString()}_${lesson.numero}`;
         const isReserved = reservationMap.has(key);
@@ -72,7 +76,8 @@ export async function getPublicSchedule(req: Request, res: Response, next: NextF
           laboratorioNome: lab.nome,
           laboratorioCodigo: lab.codigo,
           status: isReserved ? 'RESERVADO' : 'LIVRE',
-          responsavel: isReserved ? reservationMap.get(key) : null
+          responsavel: isReserved ? reservationMap.get(key) : null,
+          passado: isPast
         };
       });
 
@@ -80,6 +85,7 @@ export async function getPublicSchedule(req: Request, res: Response, next: NextF
         aula: lesson.numero,
         nomeAula: lesson.nome,
         horario: `${lesson.horarioInicio} - ${lesson.horarioFim}`,
+        passada: isPast,
         slots
       };
     });
